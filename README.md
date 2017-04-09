@@ -1,4 +1,9 @@
 StSound Library 2.0
+===================
+
+[![Build Status](https://travis-ci.org/cpcsdk/libstsound.svg?branch=master)](https://travis-ci.org/cpcsdk/libstsound)
+
+
 by the CPCSDK team
 
 What you will find here is a fork of StSoundLibrary as released by
