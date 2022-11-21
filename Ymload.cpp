@@ -153,11 +153,11 @@ unsigned char	*CYmMusic::depackFile(ymu32 checkOriginalSize)
 		fileSize = (ymu32)-1;
 
 //		if (pHeader->level != 0)					// NOTE: Endianness works because value is 0
-		if (header.level != 0)
-		{ // Compression LH5, header !=0 : Error.
+		if (header.level > 1)
+		{ // Compression LH5, header > 1) : Error.
 			free(pBigMalloc);
 			pBigMalloc = NULL;
-			setLastError("LHARC Header must be 0 !");
+			setLastError("LHARC Header must be 0 or 1 !");
 			return NULL;
 		}
 
@@ -176,7 +176,19 @@ unsigned char	*CYmMusic::depackFile(ymu32 checkOriginalSize)
 		pSrc = pBigMalloc+22+header.name_lenght;
 
 		pSrc += 2;		// skip CRC16
+		 
+		if (header.level == 1) { // https://github.com/jca02266/lha/blob/master/header.doc.md
+			pSrc++;   // skip os-type
 
+			ymu16 nextHeaderSize;
+
+			do {
+			    nextHeaderSize = pSrc[0] << 0 | pSrc[1] << 8;
+			    pSrc += 2;
+			    pSrc += nextHeaderSize;
+			} while (nextHeaderSize != 0);
+	    	}
+	
 //		const int		packedSize = ReadLittleEndian32((ymu8*)&pHeader->packed);
 		ymu32		packedSize = header.packed;
 
